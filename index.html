@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Indian Art Timeline - 7 Key Artifacts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode Variables */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #fff;
+            --bg-header: #fff;
+            --text-primary: #333;
+            --text-secondary: #555;
+            --text-muted: #666;
+            --text-accent: #e74c3c;
+            --border-color: #e9ecef;
+            --shadow-light: rgba(0,0,0,0.1);
+            --shadow-medium: rgba(0,0,0,0.15);
+            --shadow-heavy: rgba(0,0,0,0.3);
+            --timeline-bg: #f8f9fa;
+            --modal-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Variables */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-header: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888;
+            --text-accent: #ff6b6b;
+            --border-color: #404040;
+            --shadow-light: rgba(0,0,0,0.3);
+            --shadow-medium: rgba(0,0,0,0.4);
+            --shadow-heavy: rgba(0,0,0,0.6);
+            --timeline-bg: #333;
+            --modal-bg: rgba(0, 0, 0, 0.9);
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .timeline-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .timeline-header {
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 40px;
+            box-shadow: 0 2px 4px var(--shadow-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-title {
+            font-family: 'Merriweather', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .timeline-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        .theme-toggle i {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(180deg);
+        }
+
+        /* Main Content Area */
+        .timeline-main {
+            flex: 1;
+            display: flex;
+            position: relative;
+            background: var(--bg-secondary);
+            min-height: 0;
+            height: calc(100vh - 160px);
+            transition: background-color 0.3s ease;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-slide {
+            display: none;
+            max-width: 900px;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .timeline-slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px var(--shadow-medium);
+            transition: transform 0.3s ease;
+            background: var(--timeline-bg);
+            cursor: pointer;
+        }
+
+        .slide-image:hover {
+            transform: scale(1.02);
+        }
+
+        .slide-text {
+            padding: 20px 0;
+        }
+
+        .slide-date {
+            background: #3498db;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .slide-title {
+            font-family: 'Merriweather', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .slide-period {
+            font-size: 18px;
+            color: var(--text-accent);
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .slide-location {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .slide-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .slide-details h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .slide-details ul {
+            margin-left: 20px;
+        }
+
+        .slide-details li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        /* Navigation */
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow-medium);
+            color: var(--text-primary);
+        }
+
+        .nav-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--timeline-bg);
+        }
+
+        .nav-button:disabled:hover {
+            transform: translateY(-50%);
+            background: var(--timeline-bg);
+            color: var(--text-muted);
+        }
+
+        .nav-prev {
+            left: 20px;
+        }
+
+        .nav-next {
+            right: 20px;
+        }
+
+        .nav-button i {
+            font-size: 20px;
+        }
+
+        /* Timeline Bar */
+        .timeline-bar {
+            background: var(--bg-header);
+            border-top: 1px solid var(--border-color);
+            padding: 30px 40px;
+            position: relative;
+            flex-shrink: 0;
+            height: 140px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Student Credits */
+        .student-credits {
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0.8;
+            font-weight: 400;
+            line-height: 1.3;
+            text-align: right;
+            transition: opacity 0.3s ease;
+            margin-left: 20px;
+        }
+
+        .student-credits:hover {
+            opacity: 1;
+        }
+
+        .timeline-track {
+            position: relative;
+            height: 60px;
+            margin: 0 60px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            height: 2px;
+            background: #3498db;
+            transition: width 0.6s ease;
+        }
+
+        .timeline-markers {
+            position: relative;
+            height: 100%;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: var(--border-color);
+            border: 3px solid var(--bg-header);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+        .timeline-marker.active {
+            background: #3498db;
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .timeline-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 60px 0 60px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .timeline-label {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        /* Counter */
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-header);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .detail-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .detail-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Detail Modal Styles */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px var(--shadow-heavy);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .detail-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .detail-modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .detail-modal-image {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--timeline-bg);
+        }
+
+        .detail-modal h3 {
+            color: var(--text-primary);
+            margin: 20px 0 10px 0;
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .timeline-header {
+                padding: 15px 20px;
+            }
+
+            .timeline-title {
+                font-size: 24px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .slide-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .slide-image {
+                height: 250px;
+            }
+
+            .slide-title {
+                font-size: 26px;
+            }
+
+            .nav-button {
+                width: 50px;
+                height: 50px;
+            }
+
+            .nav-button i {
+                font-size: 16px;
+            }
+
+            .timeline-bar {
+                padding: 20px;
+            }
+
+            .timeline-track {
+                margin: 0 40px;
+            }
+
+            .timeline-labels {
+                margin: 15px 40px 0 40px;
+                font-size: 10px;
+            }
+
+            .student-credits {
+                font-size: 8px;
+                margin-left: 10px;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .timeline-header > div:last-child {
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="timeline-container">
+        <!-- Header -->
+        <header class="timeline-header">
+            <div>
+                <h1 class="timeline-title">Interactive Indian Art Timeline</h1>
+                <p class="timeline-subtitle">Journey through 5000 years of artistic heritage - 7 Key Artifacts</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="student-credits">
+                    Created by:<br>
+                    Debaditya Hait (RA2311003011027)<br>
+                    Saumyajit Ghosal (RA2311003011040)<br>
+                    Kairav Shrivatsav (RA2311003011041)
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span id="themeText">Dark Mode</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="timeline-main">
+            <div class="content-area">
+                <div class="slide-counter">
+                    <span id="current-slide">1</span> / <span id="total-slides">7</span>
+                </div>
+
+                <!-- Slide 1: Dancing Girl -->
+                <div class="timeline-slide active" data-year="2700">
+                    <div class="slide-content">
+                        <img src="images/1.jpg" alt="Dancing Girl of Harappa" class="slide-image" onclick="openDetailModal(0)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 2700-2100 BCE</div>
+                            <h2 class="slide-title">Dancing Girl of Harappa</h2>
+                            <div class="slide-period">Indus Valley Civilization</div>
+                            <p class="slide-location"><strong>Location:</strong> National Museum, New Delhi</p>
+                            <p class="slide-description">
+                                This bronze figurine represents one of the earliest known examples of metal casting in the Indian subcontinent. Discovered in Harappa, it showcases the sophisticated metallurgical skills of the Indus Valley people.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(0)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Lion Capital -->
+                <div class="timeline-slide" data-year="250">
+                    <div class="slide-content">
+                        <img src="images/2.jpg" alt="Lion Capital of Ashoka" class="slide-image" onclick="openDetailModal(1)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 250 BCE</div>
+                            <h2 class="slide-title">Lion Capital of Ashoka</h2>
+                            <div class="slide-period">Mauryan Empire</div>
+                            <p class="slide-location"><strong>Location:</strong> Sarnath Museum (replica); Original adopted as India's National Emblem</p>
+                            <p class="slide-description">
+                                Created during Emperor Ashoka's reign, this capital topped one of his famous pillars and represents the spread of Buddhism across the empire. Ashoka adopted Buddhism halfway through his 40-year reign and patronized Buddhist art.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(1)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Sanchi Stupa -->
+                <div class="timeline-slide" data-year="200">
+                    <div class="slide-content">
+                        <img src="images/3.jpg" alt="Sanchi Stupa" class="slide-image" onclick="openDetailModal(2)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 2nd century BCE</div>
+                            <h2 class="slide-title">Sanchi Stupa</h2>
+                            <div class="slide-period">Mauryan to Gupta periods</div>
+                            <p class="slide-location"><strong>Location:</strong> Sanchi, Madhya Pradesh</p>
+                            <p class="slide-description">
+                                Built during Ashoka's reign and expanded over several centuries, Sanchi represents the evolution of Buddhist architecture and sculpture. It's considered the oldest stone structure in India.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(2)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Ajanta Paintings -->
+                <div class="timeline-slide" data-year="400">
+                    <div class="slide-content">
+                        <img src="images/4.jpg" alt="Ajanta Cave Paintings" class="slide-image" onclick="openDetailModal(3)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 2nd century BCE - 6th century CE</div>
+                            <h2 class="slide-title">Ajanta Cave Paintings</h2>
+                            <div class="slide-period">Mauryan to Gupta periods</div>
+                            <p class="slide-location"><strong>Location:</strong> Ajanta, Maharashtra</p>
+                            <p class="slide-description">
+                                Created over several centuries by Buddhist monks, these cave paintings represent the golden age of Indian art. The Gupta period is considered the classic peak of north Indian art.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(3)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Nataraja -->
+                <div class="timeline-slide" data-year="1100">
+                    <div class="slide-content">
+                        <img src="images/5.jpg" alt="Nataraja Bronze Sculpture" class="slide-image" onclick="openDetailModal(4)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 10th-12th century CE</div>
+                            <h2 class="slide-title">Nataraja Bronze Sculpture</h2>
+                            <div class="slide-period">Chola Dynasty</div>
+                            <p class="slide-location"><strong>Location:</strong> Various museums; National Museum, New Delhi has notable examples</p>
+                            <p class="slide-description">
+                                Created during the Chola period, known for bronze sculptures and the lost-wax casting technique. The Chola dynasty was prolific in their pursuit of arts and temple construction.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(4)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 6: Tipu's Sword -->
+                <div class="timeline-slide" data-year="1750">
+                    <div class="slide-content">
+                        <img src="images/6.jpg" alt="Tipu Sultan's Personal Sword" class="slide-image" onclick="openDetailModal(5)">
+                        <div class="slide-text">
+                            <div class="slide-date">c. 1700-1800 CE</div>
+                            <h2 class="slide-title">Tipu Sultan's Personal Sword</h2>
+                            <div class="slide-period">Mysore Sultanate</div>
+                            <p class="slide-location"><strong>Location:</strong> National Museum, New Delhi</p>
+                            <p class="slide-description">
+                                Belonged to Tipu Sultan, the ruler of Mysore during the late 18th century, who fought against British colonial expansion. Represents the synthesis of Islamic and Indian craftsmanship.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(5)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 7: Bharat Mata -->
+                <div class="timeline-slide" data-year="1905">
+                    <div class="slide-content">
+                        <img src="images/7.jpg" alt="Bharat Mata by Abanindranath Tagore" class="slide-image" onclick="openDetailModal(6)">
+                        <div class="slide-text">
+                            <div class="slide-date">1905 CE</div>
+                            <h2 class="slide-title">Bharat Mata</h2>
+                            <div class="slide-period">Bengal School of Art</div>
+                            <p class="slide-location"><strong>Location:</strong> Various collections</p>
+                            <p class="slide-description">
+                                Created during the Indian independence movement, this painting became a symbol of nationalism and resistance against British rule. Tagore founded the Bengal School of Art as a reaction against Western academic art.
+                            </p>
+                            <button class="detail-btn" onclick="openDetailModal(6)">View Complete Details & Analysis</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <button class="nav-button nav-prev" id="prevBtn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-button nav-next" id="nextBtn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </main>
+
+        <!-- Timeline Bar -->
+        <div class="timeline-bar">
+            <div class="timeline-track">
+                <div class="timeline-line"></div>
+                <div class="timeline-progress" id="timelineProgress"></div>
+                <div class="timeline-markers" id="timelineMarkers">
+                    <!-- Markers will be generated by JavaScript -->
+                </div>
+            </div>
+            <div class="timeline-labels">
+                <div class="timeline-label">2700 BCE<br>Indus Valley</div>
+                <div class="timeline-label">250 BCE<br>Mauryan</div>
+                <div class="timeline-label">200 BCE<br>Buddhist</div>
+                <div class="timeline-label">400 CE<br>Classical</div>
+                <div class="timeline-label">1100 CE<br>Medieval</div>
+                <div class="timeline-label">1750 CE<br>Regional</div>
+                <div class="timeline-label">1905 CE<br>Modern</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="detail-modal">
+        <div class="detail-modal-content">
+            <span class="detail-modal-close" onclick="closeDetailModal()">&times;</span>
+            <div id="modalContent">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Detailed artifact data
+        const artifactDetails = [
+            {
+                title: "Dancing Girl of Harappa",
+                image: "images/1.jpg",
+                period: "Indus Valley Civilization (c. 2700-2100 BCE)",
+                location: "National Museum, New Delhi",
+                historical: "This bronze figurine represents one of the earliest known examples of metal casting in the Indian subcontinent. Discovered in Harappa, it showcases the sophisticated metallurgical skills of the Indus Valley people.",
+                artistic: [
+                    "Only 6 inches tall but demonstrates mastery of the lost-wax casting technique",
+                    "Features a young woman in a dancing pose with tilted head and flexed knees",
+                    "Adorned with heavy armlets, bangles, and neck ornaments",
+                    "Large eyes, flat nose, and curly hair represent early artistic expression"
+                ],
+                cultural: "This artifact provides insight into the social structure and artistic traditions of one of the world's earliest urban civilizations, suggesting the presence of performing arts and sophisticated jewelry-making techniques."
+            },
+            {
+                title: "Lion Capital of Ashoka",
+                image: "images/2.jpg",
+                period: "Mauryan Empire (c. 250 BCE)",
+                location: "Sarnath Museum (replica); Original adopted as India's National Emblem",
+                historical: "Created during Emperor Ashoka's reign, this capital topped one of his famous pillars and represents the spread of Buddhism across the empire. Ashoka adopted Buddhism halfway through his 40-year reign and patronized Buddhist art.",
+                artistic: [
+                    "Features four lions standing back-to-back on a circular abacus",
+                    "Demonstrates confident and boldly mature sculptural style",
+                    "Shows Persian and Hellenistic influences typical of Mauryan art",
+                    "Exhibits the characteristic fine Mauryan polish on stone"
+                ],
+                cultural: "Symbolizes the peaceful spread of Buddhism and Ashoka's commitment to non-violence. After Indian independence, it became the official emblem of India, representing strength, courage, and confidence."
+            },
+            {
+                title: "Sanchi Stupa",
+                image: "images/3.jpg",
+                period: "Mauryan to Gupta periods (c. 2nd century BCE)",
+                location: "Sanchi, Madhya Pradesh",
+                historical: "Built during Ashoka's reign and expanded over several centuries, Sanchi represents the evolution of Buddhist architecture and sculpture. It's considered the oldest stone structure in India.",
+                artistic: [
+                    "Hemispherical dome (chhatri) with elaborate gateways (toranas)",
+                    "Intricate stone carvings depicting Buddhist stories and symbols",
+                    "Four cardinal gateways with detailed relief sculptures",
+                    "Represents the development from wooden to stone architecture"
+                ],
+                cultural: "Serves as a pilgrimage site and represents the continuity of Buddhist tradition in India. The complex demonstrates the patronage of Buddhism by various dynasties over centuries."
+            },
+            {
+                title: "Ajanta Cave Paintings",
+                image: "images/4.jpg",
+                period: "Mauryan to Gupta periods (c. 2nd century BCE - 6th century CE)",
+                location: "Ajanta, Maharashtra",
+                historical: "Created over several centuries by Buddhist monks, these cave paintings represent the golden age of Indian art. The Gupta period is considered the classic peak of north Indian art.",
+                artistic: [
+                    "Frescoes painted on cave walls using natural organic pigments",
+                    "Smooth limestone mixture applied as base, painted within 2-3 days of setting",
+                    "Features Buddhist narratives, court scenes, and spiritual figures",
+                    "Demonstrates sophisticated understanding of perspective and human anatomy"
+                ],
+                cultural: "These paintings provide insight into ancient Indian life, fashion, and religious practices while showcasing the highest achievements in Indian mural painting."
+            },
+            {
+                title: "Nataraja Bronze Sculpture",
+                image: "images/5.jpg",
+                period: "Chola Dynasty (c. 10th-12th century CE)",
+                location: "Various museums; National Museum, New Delhi has notable examples",
+                historical: "Created during the Chola period, known for bronze sculptures and the lost-wax casting technique. The Chola dynasty was prolific in their pursuit of arts and temple construction.",
+                artistic: [
+                    "Four-armed Shiva performing the cosmic dance (Ananda Tandava)",
+                    "Encircled by a ring of fire (prabhamandala)",
+                    "Perfect balance and proportions following ancient sculptural texts",
+                    "Demonstrates mastery of bronze casting technology"
+                ],
+                cultural: "Represents the essential aspects of Shiva - creation, preservation, destruction, and grace. The dance symbolizes the cosmic cycles of creation and destruction, making it one of the most iconic images in Hindu art."
+            },
+            {
+                title: "Tipu Sultan's Personal Sword",
+                image: "images/6.jpg",
+                period: "Mysore Sultanate (c. 1700-1800 CE)",
+                location: "National Museum, New Delhi",
+                historical: "Belonged to Tipu Sultan, the ruler of Mysore during the late 18th century, who fought against British colonial expansion. Represents the synthesis of Islamic and Indian craftsmanship.",
+                artistic: [
+                    "Delhishahi hilt with circular disc pommel damascened in gold",
+                    "Fine steel blade inscribed with verses from the Holy Quran",
+                    "Features Tipu Sultan's name and his capital Srirangapatnam",
+                    "Wooden sheath covered with maroon velvet"
+                ],
+                cultural: "Symbolizes resistance against colonialism and represents the high level of metalworking and calligraphy during the Mysore period. The sword combines functional design with artistic beauty."
+            },
+            {
+                title: "Bharat Mata by Abanindranath Tagore",
+                image: "images/7.jpg",
+                period: "Bengal School of Art (1905)",
+                location: "Various collections",
+                historical: "Created during the Indian independence movement, this painting became a symbol of nationalism and resistance against British rule. Tagore founded the Bengal School of Art as a reaction against Western academic art.",
+                artistic: [
+                    "Depicts Bharat Mata (Mother India) as a four-armed saint (sadhavi)",
+                    "Painted in watercolor with soft, ethereal quality",
+                    "Shows Indian goddess holding a book, lotus, food grains, and white cloth",
+                    "Combines traditional Indian iconography with modern nationalist themes"
+                ],
+                cultural: "Became an iconic image of the Indian independence movement, carried to various places to spread nationalist messages. Represents the revival of Indian artistic traditions and cultural identity during colonial rule."
+            }
+        ];
+
+        // Modal functions
+        function openDetailModal(index) {
+            const artifact = artifactDetails[index];
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <img src="${artifact.image}" alt="${artifact.title}" class="detail-modal-image">
+                <h2 style="font-family: 'Merriweather', serif; color: #2c3e50; margin-bottom: 10px;">${artifact.title}</h2>
+                <p style="color: #e74c3c; font-weight: 600; margin-bottom: 5px;">${artifact.period}</p>
+                <p style="color: #666; margin-bottom: 20px;"><strong>Location:</strong> ${artifact.location}</p>
+                
+                <h3>Historical Context</h3>
+                <p style="line-height: 1.7; margin-bottom: 20px;">${artifact.historical}</p>
+                
+                <h3>Artistic Significance</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    ${artifact.artistic.map(item => `<li style="margin-bottom: 8px;">${item}</li>`).join('')}
+                </ul>
+                
+                <h3>Cultural Importance</h3>
+                <p style="line-height: 1.7;">${artifact.cultural}</p>
+            `;
+            
+            document.getElementById('detailModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Light Mode';
+            } else {
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Dark Mode';
+            }
+        }
+
+        class Timeline {
+            constructor() {
+                this.currentSlide = 0;
+                this.totalSlides = 7;
+                this.slides = document.querySelectorAll('.timeline-slide');
+                this.markers = [];
+                this.isAnimating = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.createMarkers();
+                this.bindEvents();
+                this.updateDisplay();
+            }
+
+            createMarkers() {
+                const markersContainer = document.getElementById('timelineMarkers');
+                const positions = [0, 16.67, 33.33, 50, 66.67, 83.33, 100];
+                
+                positions.forEach((position, index) => {
+                    const marker = document.createElement('div');
+                    marker.className = 'timeline-marker';
+                    marker.style.left = `${position}%`;
+                    marker.addEventListener('click', () => this.goToSlide(index));
+                    markersContainer.appendChild(marker);
+                    this.markers.push(marker);
+                });
+            }
+
+            bindEvents() {
+                document.getElementById('prevBtn').addEventListener('click', () => this.previousSlide());
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextSlide());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.previousSlide();
+                    if (e.key === 'ArrowRight') this.nextSlide();
+                });
+
+                // Touch/swipe support
+                let startX = 0;
+                let endX = 0;
+                
+                document.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+                
+                document.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.previousSlide();
+                        }
+                    }
+                });
+            }
+
+            goToSlide(index, direction = 'right') {
+                if (this.isAnimating || index === this.currentSlide || index < 0 || index >= this.totalSlides) {
+                    return;
+                }
+
+                this.isAnimating = true;
+                
+                // Hide current slide
+                this.slides[this.currentSlide].classList.remove('active');
+                
+                setTimeout(() => {
+                    // Show new slide
+                    this.currentSlide = index;
+                    this.slides[this.currentSlide].classList.add('active');
+                    
+                    // Add animation class
+                    if (direction === 'right') {
+                        this.slides[this.currentSlide].classList.add('slide-in-right');
+                    } else {
+                        this.slides[this.currentSlide].classList.add('slide-in-left');
+                    }
+                    
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        this.slides[this.currentSlide].classList.remove('slide-in-right', 'slide-in-left');
+                        this.isAnimating = false;
+                    }, 600);
+                    
+                    this.updateDisplay();
+                }, 300);
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides - 1) {
+                    this.goToSlide(this.currentSlide + 1, 'right');
+                }
+            }
+
+            previousSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1, 'left');
+                }
+            }
+
+            updateDisplay() {
+                // Update counter
+                document.getElementById('current-slide').textContent = this.currentSlide + 1;
+                
+                // Update navigation buttons
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                prevBtn.disabled = this.currentSlide === 0;
+                nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+                
+                // Update markers
+                this.markers.forEach((marker, index) => {
+                    marker.classList.toggle('active', index === this.currentSlide);
+                });
+                
+                // Update progress bar
+                const progress = ((this.currentSlide) / (this.totalSlides - 1)) * 100;
+                document.getElementById('timelineProgress').style.width = `${progress}%`;
+            }
+        }
+
+        // Initialize timeline when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            new Timeline();
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target === modal) {
+                closeDetailModal();
+            }
+        }
+    </script>
+</body>
+</html> 
